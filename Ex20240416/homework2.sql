@@ -1,8 +1,19 @@
 -- 1. emp테이블에서 연봉을 계산하는 SELECT문장을 기술하시오(급여*보너스)
-
+SELECT FLOOR(sal*IFNULL(comm,0)) as yearlySal
+FROM emp
+;
 
 -- 2. emp테이블에서 사번이 7521번인 사원의 직종과 같고,7844번 사원의 급여보다 많이 받는 사원들의 정보를사번,이름,직종,급여,입사일 순으로 출력하시오.단,서브쿼리를 활용하자
-
+SELECT empno, ename, job, sal, hiredate
+FROM 	(SELECT *
+		 FROM emp
+		 WHERE job = (SELECT job
+					  FROM emp
+					  WHERE empno = '7521')) as ej
+WHERE ej.sal > (SELECT sal
+				FROM emp
+                WHERE empno = '7844')
+;
 
 -- 3. emp테이블에서 직종이 ‘CLERK’ 또는 ‘SALESMAN’인 사원들 중 최대 급여를 구하는 SELECT문장을 기술하시오
 
