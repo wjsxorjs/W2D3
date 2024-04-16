@@ -31,25 +31,64 @@ FROM dept d INNER JOIN locations l
 ON d.loc_code = l.loc_code
 ;
 
--- 
+-- 위는 조인된 테이블들끼리 참조되는 동일한 자원들만 보여준다.
+-- 그래서 사번이 7942인 JACK은 결과로 포함시키지 않는다.
+-- 때에 따라 JACK같은 자원들도 결과로 포함시키고 싶을 때가 있는데
+-- 이때, 사용하는 것이 OUTER JOIN이다.
 
 
-
-
-
-SELECT empno, ename, job, hiredate, d.deptno, dname
-FROM emp e LEFT JOIN dept d -- 별칭 부여 필수
+-- LEFT, RIGHT JOIN : OUTER JOIN
+-- 	LEFT JOIN은 왼쪽 테이블의 자원들을 "연결성을 고려하지않고" 모두 출력하며
+-- 	오른쪽 테이블의 자원들은 연결되어 있는 자원들만 출력한다.
+SELECT e.empno, e.ename, e.job, e.hiredate, e.deptno, d.dname
+FROM emp e LEFT OUTER JOIN dept d -- 별칭 부여 필수
 ON e.deptno = d.deptno
 ;
 
+-- 	RIGHT JOIN은 오른쪽 테이블의 자원들을 "연결성을 고려하지않고" 모두 출력하며
+-- 	왼쪽 테이블의 자원들은 연결되어 있는 자원들만 출력한다.
+
+-- 현재 부서는 존재하지만 구성원이 없는 부서를 알아내기
 SELECT e.empno, e.ename, e.job, e.hiredate, d.deptno, d.dname
-FROM emp e RIGHT JOIN dept d -- 별칭 부여 필수
+FROM emp e RIGHT OUTER JOIN dept d -- 별칭 부여 필수
 ON e.deptno = d.deptno
 ;
 
--- 
--- 
--- 
+SELECT d.deptno, d.dname, COUNT(e.empno)
+FROM emp e RIGHT OUTER JOIN dept d -- 별칭 부여 필수
+ON e.deptno = d.deptno
+GROUP BY 1,2
+;
+
+-- 문제) emp테이블에서 직종이 'ANALYST'인 사원들의 정보를
+-- 		사번,이름,직종,급여,부서명,도시코드 순으로 출력하라
+
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc_code
+FROM (emp e INNER JOIN dept d ON e.deptno = d.deptno)
+WHERE e.job = 'ANALYST'
+;
+
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc_code
+FROM ((SELECT * FROM emp WHERE job = 'ANALYST') as e INNER JOIN dept d ON e.deptno = d.deptno)
+;
+
+-- 문제) 위의 내용에서 도시명을 하나 더 추가해서 출력하려 한다
+-- 		사번,이름,직종,급여,부서명,도시코드 순으로 출력하라
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc_code, l.city
+FROM (((
+		SELECT * FROM emp WHERE job = 'ANALYST' ) as e
+		LEFT OUTER JOIN dept d ON e.deptno = d.deptno)
+        LEFT OUTER JOIN locations l ON d.loc_code = l.loc_code)
+;
+
+-- 또는
+SELECT e.empno, e.ename, e.job, e.sal, d.deptno, d.dname, l.city
+FROM emp e, dept d, locations l
+WHERE e.deptno = d.deptno
+  AND d.loc_code = l.loc_code
+  AND e.job = 'ANALYST'
+
+
 -- 
 -- 
 -- 
