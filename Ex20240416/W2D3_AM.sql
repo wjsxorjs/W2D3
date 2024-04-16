@@ -112,18 +112,47 @@ FROM emp e LEFT OUTER JOIN emp m ON e.mgr = m.empno
 -- 문제) 사번이 7499인 사람과 부서가 같고, 7934번의 급여보다 많은 사원들의
 -- 		사번, 이름, 급여를 출력하시오. 
 
+SELECT ed.empno, ed.ename, es.sal
+FROM 	(SELECT *
+		 FROM emp
+		 WHERE deptno = 	(SELECT deptno
+							 FROM emp
+							 WHERE empno = 7499)
+		) as ed
+        INNER JOIN
+		(SELECT *
+		 FROM emp
+		 WHERE sal > 	(SELECT sal
+						 FROM emp
+						 WHERE empno = 7934)
+		) as es
+        ON
+        ed.empno = es.empno
+;
 
 
 -- 문제) 전체 급여 평균보다 급여를 적게 받는 사원들 중 보너스를 받는 사원들의 사번, 이름,  급여,
 -- 		보너스를 출력하시오.
-
+SELECT es.empno, es.ename, es.sal, es.comm
+FROM (SELECT *
+	  FROM emp
+	  WHERE sal < (SELECT AVG(IFNULL(sal,0))
+				   FROM emp) 
+) as es
+WHERE es.comm IS NOT NULL AND es.comm > 0
+;
 
 
 -- 문제) 각 부서의 최소급여가 30번 부서의 최소급여보다 많은 부서의 번호와 그 부서의 최소급여를 
 -- 		출력하시오.
 
-
-
+SELECT deptno, MIN(sal)
+FROM emp
+GROUP BY deptno
+HAVING MIN(sal) > (SELECT MIN(sal)
+				   FROM emp
+				   WHERE deptno = 30)
+;
 
 
 -- DDL : CREATE, ALTER, DROP
@@ -228,20 +257,3 @@ WHERE m_idx = 2;
 	FROM member_t;
 -- -- 데이터 확인 -- --
 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
