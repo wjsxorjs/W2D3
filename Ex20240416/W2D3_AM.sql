@@ -87,22 +87,72 @@ FROM emp e, dept d, locations l
 WHERE e.deptno = d.deptno
   AND d.loc_code = l.loc_code
   AND e.job = 'ANALYST'
+;
+
+-- 문제) 'DALLAS'에서 근무하는 사원들의 정보를 
+-- 		사번, 이름, 직종, 입사일, 부서코드, 도시명 순으로 출력하라
+SELECT e.empno, e.ename, e.job, e.hiredate, d.deptno, l.city
+FROM emp e, dept d, (SELECT * FROM locations WHERE city = 'DALLAS') l
+WHERE e.deptno = d.deptno AND d.loc_code = l.loc_code
+;
+
+SELECT e.empno, e.ename, e.job, e.hiredate, d.deptno, l.city
+FROM ((emp e INNER JOIN dept d ON e.deptno = d.deptno)
+			 INNER JOIN (SELECT * FROM locations WHERE city = 'DALLAS') l ON d.loc_code = l.loc_code)
+;
+
+-- 문제) 각 사원들의 관리자(mgr)가 누구인지를 알아내어
+-- 		사번, 이름, 관리자 사번(mgr), 관리자명 순으로 출력하라
+
+SELECT e.empno, e.ename, e.mgr, m.ename
+FROM emp e LEFT OUTER JOIN emp m ON e.mgr = m.empno
+;
 
 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
--- 
+-- 문제) 사번이 7499인 사람과 부서가 같고, 7934번의 급여보다 많은 사원들의
+-- 		사번, 이름, 급여를 출력하시오. 
+
+
+
+-- 문제) 전체 급여 평균보다 급여를 적게 받는 사원들 중 보너스를 받는 사원들의 사번, 이름,  급여,
+-- 		보너스를 출력하시오.
+
+
+
+-- 문제) 각 부서의 최소급여가 30번 부서의 최소급여보다 많은 부서의 번호와 그 부서의 최소급여를 
+-- 		출력하시오.
+
+
+
+
+
+-- DDL : CREATE, ALTER, DROP
+
+-- 도서들을 저장하는 테이블 생성
+-- 	도서에 필요한 정보(도서명, 저자, 출판사, 가격, 등록일)
+CREATE TABLE book_t(
+	b_idx BIGINT AUTO_INCREMENT,
+    title VARCHAR(100),
+    author VARCHAR(50),
+    press VARCHAR(50),
+    price DECIMAL(9,1),
+    CONSTRAINT book_t_pk PRIMARY KEY(b_idx)
+);
+
+-- 테이블 수정 : 컬럼 추가
+-- 	등록일을 press 컬럼 뒤에 저장하는 컬럼을 추가한다.
+ALTER TABLE book_t
+ADD reg_date DATE NULL AFTER press
+;
+
+-- 테이블 수정 : 컬럼 자료형 변경
+-- 		제목의 자료형 길이를 200으로 변경
+ALTER TABLE book_t
+MODIFY title VARCHAR(200)
+;
+
+
+
 -- 
 -- 
 -- 
