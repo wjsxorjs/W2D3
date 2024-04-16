@@ -151,8 +151,93 @@ ALTER TABLE book_t
 MODIFY title VARCHAR(200)
 ;
 
+-- 테이블 수정 : 컬럼 삭제
+-- 		출판사 정보 삭제
+ALTER TABLE book_t
+DROP COLUMN press
+;
 
 
+-- 회원 정보를 저장하는 테이블이 필요한 상황
+--  회원 테이블(
+-- 		회원명
+-- 		이메일
+-- 		전화번호
+-- 		)가 필요하다.
+
+DROP TABLE member_t;
+
+CREATE TABLE member_t(
+	m_idx BIGINT AUTO_INCREMENT,
+	mname VARCHAR(50),
+    memail VARCHAR(100),
+    mphone VARCHAR(50),
+    CONSTRAINT member_t_pk PRIMARY KEY(m_idx)
+);
+
+-- 데이터 추가 : INSERT
+INSERT
+INTO member_t(mname, memail, mphone)
+VALUES ('JACK','jackesther@gmail.com','010-0000-0000')
+;
+
+INSERT
+INTO member_t(mname, memail, mphone)
+VALUES ('JANE','janeesther@gmail.com','010-0000-0001')
+;
+
+INSERT
+INTO member_t(mname)
+VALUES ('JAKE')
+;
+
+INSERT
+INTO member_t(memail)
+VALUES ('joanesther@gmail.com')
+;
+
+-- 회원이 등록되는 날짜정보를 추가하지 못한 상황
+-- 회원 등록일(reg_date)를 추가하라
+ALTER TABLE member_t
+ADD COLUMN reg_date DATE NULL
+;
+
+-- reg_date라는 컬럼의 이름을 write_date로 변경하라
+ALTER TABLE member_t
+RENAME COLUMN reg_date TO write_date
+;
+
+-- 데이터 수정 : UPDATE
+-- JAKE라는 이름을 JACOB이라는 이름으로 수정하려 한다.
+-- JAKE의 기본키로 조건을 부여하고 수정하여야 한다.
+UPDATE member_t
+SET mname = "JACOB"
+WHERE m_idx = 3
+;
+
+-- 회원번호가 2번인 회원의 이름을 'JILL'로 그리고
+-- 이메일은 'jillesther@gmail.com'으로 변경하라
+UPDATE member_t
+SET mname = 'JILL', memail = 'jillesther@gmail.com'
+WHERE m_idx = 2;
+
+
+
+-- -- 데이터 확인 -- --
+	SELECT *
+	FROM member_t;
+-- -- 데이터 확인 -- --
+
+-- 
+-- 
+-- 
+-- 
+-- 
+-- 
+-- 
+-- 
+-- 
+-- 
 -- 
 -- 
 -- 
